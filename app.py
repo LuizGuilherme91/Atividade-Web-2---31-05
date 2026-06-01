@@ -74,7 +74,7 @@ def atualizar(produto_id, acao):
             break
 
     gravar_inventario(produtos)
-    return redirect(url_for('index'))
+    return redirect(url_for('index') + '#consulta')
 
 
 @app.route('/excluir/<int:produto_id>', methods=['POST'])
@@ -82,7 +82,7 @@ def excluir(produto_id):
     produtos = ler_inventario()
     produtos = [p for p in produtos if p['id'] != produto_id]
     gravar_inventario(produtos)
-    return redirect(url_for('index'))
+    return redirect(url_for('index') + '#consulta')
 
 
 if __name__ == '__main__':
