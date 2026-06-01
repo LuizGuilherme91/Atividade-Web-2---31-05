@@ -24,7 +24,6 @@
     <main class="container">
         <h1>🖥️ Tradição Tech Store</h1>
 
-        <!-- MENU -->
         <nav>
             <ul>
                 <li><a href="#cadastro">Cadastro</a></li>
@@ -32,7 +31,6 @@
             </ul>
         </nav>
 
-        <!-- CADASTRO -->
         <section id="cadastro">
             <h2>Cadastrar Produto</h2>
 
@@ -54,11 +52,9 @@
             </form>
         </section>
 
-        <!-- CONSULTA -->
         <section id="consulta">
             <h2>Produtos em Estoque</h2>
 
-            <!-- Bônus: pesquisa dinâmica -->
             <input type="text" id="pesquisa" placeholder="🔍 Pesquisar produto pelo nome..." oninput="filtrarTabela()">
 
             {% if produtos %}
@@ -80,15 +76,12 @@
                         <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
                         <td>{{ produto.quantidade }}</td>
                         <td>
-                            <!-- Botão + -->
                             <form action="/atualizar/{{ produto.id }}/aumentar" method="POST" style="display:inline">
                                 <button class="btn-acao btn-mais" type="submit">+</button>
                             </form>
-                            <!-- Botão - -->
                             <form action="/atualizar/{{ produto.id }}/diminuir" method="POST" style="display:inline">
                                 <button class="btn-acao btn-menos" type="submit">−</button>
                             </form>
-                            <!-- Botão Excluir -->
                             <form action="/excluir/{{ produto.id }}" method="POST" style="display:inline"
                                 onsubmit="return confirm('Excluir {{ produto.nome }}?')">
                                 <button class="btn-acao btn-excluir" type="submit">🗑</button>

@@ -41,7 +41,6 @@ def adicionar():
 
     produtos = ler_inventario()
 
-    # Bônus: bloquear nome duplicado (sem diferenciar maiúsculas/minúsculas)
     for p in produtos:
         if p['nome'].lower() == nome.lower():
             return redirect(url_for('index', erro='duplicado'))
