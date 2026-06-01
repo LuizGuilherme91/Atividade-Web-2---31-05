@@ -5,12 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tradição Tech Store - Inventário</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .btn-acao {
+            padding: 2px 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .btn-mais  { background-color: #4CAF50; color: white; }
+        .btn-menos { background-color: #FF9800; color: white; }
+        .btn-excluir { background-color: #f44336; color: white; }
+        .erro-msg { color: red; margin-bottom: 1rem; }
+    </style>
 </head>
 <body>
     <main class="container">
         <h1>🖥️ Tradição Tech Store</h1>
 
-        <!-- MENU DE NAVEGAÇÃO -->
+        <!-- MENU -->
         <nav>
             <ul>
                 <li><a href="#cadastro">Cadastro</a></li>
@@ -18,9 +32,14 @@
             </ul>
         </nav>
 
-        <!-- SEÇÃO DE CADASTRO -->
+        <!-- CADASTRO -->
         <section id="cadastro">
             <h2>Cadastrar Produto</h2>
+
+            {% if request.args.get('erro') == 'duplicado' %}
+            <p class="erro-msg">⚠️ Já existe um produto com esse nome!</p>
+            {% endif %}
+
             <form action="/adicionar" method="POST">
                 <label for="nome">Nome do Produto</label>
                 <input type="text" id="nome" name="nome" required>
@@ -35,9 +54,13 @@
             </form>
         </section>
 
-        <!-- SEÇÃO DE CONSULTA -->
+        <!-- CONSULTA -->
         <section id="consulta">
             <h2>Produtos em Estoque</h2>
+
+            <!-- Bônus: pesquisa dinâmica -->
+            <input type="text" id="pesquisa" placeholder="🔍 Pesquisar produto pelo nome..." oninput="filtrarTabela()">
+
             {% if produtos %}
             <table role="grid">
                 <thead>
@@ -46,15 +69,31 @@
                         <th>Nome</th>
                         <th>Preço</th>
                         <th>Quantidade</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="corpo-tabela">
                     {% for produto in produtos %}
                     <tr>
                         <td>{{ produto.id }}</td>
-                        <td>{{ produto.nome }}</td>
+                        <td class="nome-produto">{{ produto.nome }}</td>
                         <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
                         <td>{{ produto.quantidade }}</td>
+                        <td>
+                            <!-- Botão + -->
+                            <form action="/atualizar/{{ produto.id }}/aumentar" method="POST" style="display:inline">
+                                <button class="btn-acao btn-mais" type="submit">+</button>
+                            </form>
+                            <!-- Botão - -->
+                            <form action="/atualizar/{{ produto.id }}/diminuir" method="POST" style="display:inline">
+                                <button class="btn-acao btn-menos" type="submit">−</button>
+                            </form>
+                            <!-- Botão Excluir -->
+                            <form action="/excluir/{{ produto.id }}" method="POST" style="display:inline"
+                                onsubmit="return confirm('Excluir {{ produto.nome }}?')">
+                                <button class="btn-acao btn-excluir" type="submit">🗑</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -65,5 +104,20 @@
         </section>
 
     </main>
+
+    <script>
+        function filtrarTabela() {
+            const termo = document.getElementById('pesquisa').value.toLowerCase();
+            const linhas = document.querySelectorAll('#corpo-tabela tr');
+
+            linhas.forEach(linha => {
+                const nome = linha.querySelector('.nome-produto');
+                if (nome) {
+                    const visivel = nome.textContent.toLowerCase().includes(termo);
+                    linha.style.display = visivel ? '' : 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
